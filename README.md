@@ -7,7 +7,7 @@ Each version is maintained in its own branch for clarity.
 ## 📌 Available Versions
 | Version | Branch | Release Notes | Download PDF | Guideline |
 |---------|--------|--------------|--------------|-----------|
-| v2.0 | [`branch-v2.0`](https://github.com/IdayuIsmail/SSO-Integration-Guideline/tree/branch-v2.0) | [Release v2.0](https://github.com/IdayuIsmail/SSO-Integration-Guideline/releases/tag/v2.0) | [PDF](https://github.com/IdayuIsmail/SSO-Integration-Guideline/releases/download/v2.0/SSO.Integration.Guideline.Document_v2.0.pdf) | [Guideline](https://github.com/IdayuIsmail/SSO-Integration-Guideline/blob/branch-v2.0/Guideline-v2.0.md) |
+| v2.0 | [`branch-v2.0`](https://github.com/MyIDSSO/SSO-Integration-Guideline/tree/branch-v2.0) | [Release v2.0](https://github.com/IdayuIsmail/SSO-Integration-Guideline/releases/tag/v2.0) | [PDF](https://github.com/IdayuIsmail/SSO-Integration-Guideline/releases/download/v2.0/SSO.Integration.Guideline.Document_v2.0.pdf) | [Guideline](https://github.com/IdayuIsmail/SSO-Integration-Guideline/blob/branch-v2.0/Guideline-v2.0.md) |
 
 ---
 
