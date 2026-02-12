@@ -54,7 +54,9 @@
     - [PHP 7 with Laravel Framework](#php-7-with-laravel-framework)
       - [Environment Configuration](#environment-configuration)
       - [Library Installation](#library-installation)
-      - [Add Keycloak Driver](#add-keycloak-driver)
+      - [Add Keycloak Configuration](#add-keycloak-configuration)
+      - [Create Custom Keycloak Provider](#create-custom-keycloak-provider)
+      - [Register Custom Keycloak Provider](#register-custom-keycloak-provider)
       - [Create redirectToKeycloak Function](#create-redirecttokeycloak-function)
       - [Create handleKeycloakCallback Function](#create-handlekeycloakcallback-function)
       - [Add IC Number Column in Model](#add-ic-number-column-in-model)
@@ -62,11 +64,10 @@
     - [PHP 8 with Laravel Framework](#php-8-with-laravel-framework)
       - [Environment Configuration](#environment-configuration-1)
       - [Library Installation](#library-installation-1)
-      - [Configure Return Variable](#configure-return-variable)
-      - [Add Keycloak Driver](#add-keycloak-driver-1)
+      - [Add Keycloak Configuration](#add-keycloak-configuration-1)
+      - [Create Custom Keycloak Provider](#create-custom-keycloak-provider-1)
+      - [Register Custom Keycloak Provider](#register-custom-keycloak-provider-1)
       - [Create redirectToKeycloak Function](#create-redirecttokeycloak-function-1)
-      - [Create getAccessTokenFromKeycloak Function](#create-getaccesstokenfromkeycloak-function)
-      - [Create getUserInfoFromKeycloak Function](#create-getuserinfofromkeycloak-function)
       - [Create handleKeycloakCallback Function](#create-handlekeycloakcallback-function-1)
       - [Add IC Number Column in Model](#add-ic-number-column-in-model-1)
       - [Create updateICNumber Function](#create-updateicnumber-function)
@@ -113,30 +114,29 @@
 - [Figure 3: Simplified OpenID Connect Authorization Code Flow](#figure-3-simplified-openid-connect-authorization-code-flow)
 - [Figure 4: MyDigital ID SSO Protocol Sequence Diagram](#_bookmark17)
 - [Figure 5: Environment Configuration in PHP Laravel](#_bookmark36)
-- [Figure 6: Keycloak Guard Library Installation](#_bookmark38)
-- [Figure 7: Keycloak Driver](#_bookmark40)
-- [Figure 8: redirectToKeycloak Function](#_bookmark42)
-- [Figure 9: handleKeycloakCallback Function](#_bookmark44)
-- [Figure 10: Retrieve User Information](#_bookmark45)
-- [Figure 11: Finds IC Number and Stored in The Database](#_bookmark46)
+- [Figure 6: Socialite Keycloak Provider Library Installation](#_bookmark38)
+- [Figure 7: Keycloak Configuration in services.php](#_bookmark40)
+- [Figure 8: Custom Keycloak Provider Class](#_bookmark42)
+- [Figure 9: Register Custom Keycloak Provider in EventServiceProvider](#_bookmark44)
+- [Figure 10: redirectToKeycloak Function](#_bookmark45)
+- [Figure 11: handleKeycloakCallback Function](#_bookmark46)
 - [Figure 12: Add IC Number Column](#_bookmark48)
 - [Figure 13: Add New Routes](#_bookmark50)
 - [Figure 14: Environment Configuration in PHP Laravel](#_bookmark53)
-- [Figure 15: Keycloak Guard Library Installation](#_bookmark55)
-- [Figure 16: Configure the Return Variable](#_bookmark57)
-- [Figure 17: Keycloak Driver](#_bookmark59)
-- [Figure 18: redirectToKeycloak Function](#_bookmark61)
-- [Figure 19: getAccessTokenFromKeycloak Function](#_bookmark63)
-- [Figure 20: getUserInfoFromKeycloak Function](#_bookmark65)
-- [Figure 21: handleKeycloakCallback Function](#_bookmark67)
-- [Figure 22: Retrieve User Information](#_bookmark68)
-- [Figure 23: Verify IC Number](#_bookmark69)
-- [Figure 24: Verify IC Number with The Hashed Value Stored in The Database](#_bookmark70)
-- [Figure 25: Add IC Number Column](#_bookmark72)
-- [Figure 26: updateICNumber Function](#_bookmark74)
-- [Figure 27: verifyAndLinkAccount Function](#_bookmark76)
-- [Figure 28: registerNewAccount Function](#_bookmark78)
-- [Figure 29: Add New Routes](#_bookmark80)
+- [Figure 15: Socialite Keycloak Provider Library Installation](#_bookmark55)
+- [Figure 16: Keycloak Configuration in services.php](#_bookmark57)
+- [Figure 17: Custom Keycloak Provider Class](#_bookmark59)
+- [Figure 18: Register Custom Keycloak Provider in AppServiceProvider](#_bookmark61)
+- [Figure 19: redirectToKeycloak Function](#_bookmark63)
+- [Figure 20: handleKeycloakCallback Function](#_bookmark65)
+- [Figure 21: Retrieve User Information](#_bookmark67)
+- [Figure 22: Verify IC Number](#_bookmark68)
+- [Figure 23: Verify IC Number with The Hashed Value Stored in The Database](#_bookmark69)
+- [Figure 24: Add IC Number Column](#_bookmark70)
+- [Figure 25: updateICNumber Function](#_bookmark72)
+- [Figure 26: verifyAndLinkAccount Function](#_bookmark74)
+- [Figure 27: registerNewAccount Function](#_bookmark76)
+- [Figure 28: Add New Routes](#_bookmark78)
 - [Figure 30: Environment Configuration in PHP Laravel](#_bookmark83)
 - [Figure 31: openid-connect-php Library Installation](#_bookmark85)
 - [Figure 32: loginWithKeycloak Function](#_bookmark87)
@@ -454,9 +454,9 @@ Below is a list of libraries that supports Keycloak SSO Integration with the sui
 | **Python** | 3.6+ | Flask | 1.x to 2.x | flask-oauthlib | > 0.9 |
 | | 3.6+ | Django | 3.x | django-oauth-toolkit | > 1.x |
 | | 3.6+ | FastAPI | 0.68+ | fastapi-keycloak | > 1.x |
-| **PHP** | 8.1+ | Laravel | 10.x | laravel-keycloak-guard | > 3.x |
-| | 8.0+ | Laravel | 9.x | laravel-keycloak-guard | > 2.x |
-| | 7.4+ | Laravel | 7.x to 8.x | laravel-keycloak-guard | > 2.x |
+| **PHP** | 8.1+ | Laravel | 10.x | socialiteproviders/keycloak | > 5.x |
+| | 8.0+ | Laravel | 9.x | socialiteproviders/keycloak | > 5.x |
+| | 7.4+ | Laravel | 7.x to 8.x | socialiteproviders/keycloak | > 4.x |
 | | 7.0+ | Codeigniter | 3.x | oauth2-client | > 1.x |
 | | 7.4+ | Codeigniter | 3.x | oauth2-client | > 2.x |
 | | 8.0+ | Codeigniter | 4.x | openid-connect-php | > 3.x |
@@ -507,7 +507,7 @@ The configuration of Keycloak for an application or website is managed through t
 
 #### PHP 7 with Laravel Framework
 
-> This configuration guide is specifically applicable to **PHP v7.4.33** and **Laravel framework v8.83.29**. It is important to note that this guide may not be universally compatible with all PHP or Laravel versions. Developers should verify that their environment, including libraries, programming language, and framework versions, aligns with these requirements to ensure successful implementation.
+> This configuration guide is specifically applicable to **PHP v7.4.33** and **Laravel framework v8.83.29**. This guide uses the [Socialite Providers Keycloak](https://socialiteproviders.com/Keycloak/) package with a custom Provider override to support MyDigital ID's NRIC-based authentication. Developers should verify that their environment, including libraries, programming language, and framework versions, aligns with these requirements to ensure successful implementation.
 
 ##### Environment Configuration
 
@@ -520,141 +520,186 @@ KEYCLOAK_BASE_URL=MydigitalID_host
 KEYCLOAK_REALM=mydid
 KEYCLOAK_CLIENT_ID=Client ID
 KEYCLOAK_CLIENT_SECRET=NUxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-KEYCLOAK_REDIRECT_URI=http://127.0.0.1:8000/callback 
+KEYCLOAK_REDIRECT_URI=http://127.0.0.1:8000/callback
 ```
 
 <div align="center">
-  
+
 **Figure 5: Environment Configuration in PHP Laravel**
 
 </div>
 
 ##### Library Installation
 
-Install the Keycloak Guard library in the Laravel project folder.
+Install the Socialite Providers Keycloak library and the Socialite Providers Manager in the Laravel project folder.
 
 <a id="_bookmark38"></a>
 
 ```
-composer require robsontenorio/laravel-keycloak-guard
+composer require socialiteproviders/keycloak
 ```
 
 <div align="center">
 
-**Figure 6: Keycloak Guard Library Installation**
+**Figure 6: Socialite Keycloak Provider Library Installation**
 
 </div>
 
-##### Add Keycloak Driver
+##### Add Keycloak Configuration
 
-Add the configuration for the Keycloak driver in the `auth.php` file to define Keycloak as an authentication provider for the application.
+Add the Keycloak configuration in the `config/services.php` file to define the Keycloak connection parameters for Socialite.
 
 <a id="_bookmark40"></a>
 
-```
+```php
 'keycloak' => [
-    'driver' => 'keycloak-web',
-    'provider' => 'users',
+    'client_id'     => env('KEYCLOAK_CLIENT_ID'),
+    'client_secret' => env('KEYCLOAK_CLIENT_SECRET'),
+    'redirect'      => env('KEYCLOAK_REDIRECT_URI'),
+    'base_url'      => env('KEYCLOAK_BASE_URL'),
+    'realms'        => env('KEYCLOAK_REALM'),
 ],
 ```
 
 <div align="center">
 
-**Figure 7: Keycloak Driver**
+**Figure 7: Keycloak Configuration in services.php**
 
 </div>
 
-##### Create redirectToKeycloak Function
+##### Create Custom Keycloak Provider
 
-In the `LoginController.php` file, create the `redirectToKeycloak` function. This function redirects users to the Keycloak Authorization Endpoint to start the login process. It is a key step in integrating Keycloak with a PHP application using the OAuth2 or OpenID Connect protocols, ensuring secure and seamless user authentication.
+Since MyDigital ID uses NRIC as the primary authentication identifier, create a custom Provider class that extends the Socialite Keycloak Provider to include the `nric` field in the user mapping. Create the file at `app/Resolvers/SSO/Keycloak/Provider.php`.
 
 <a id="_bookmark42"></a>
 
-```
-public function redirectToKeycloak()
+```php
+<?php
+
+namespace App\Resolvers\SSO\Keycloak;
+
+use Illuminate\Support\Arr;
+use Laravel\Socialite\Two\User;
+use SocialiteProviders\Keycloak\Provider as KeycloakProvider;
+
+class Provider extends KeycloakProvider
 {
-    return redirect(env('KEYCLOAK_BASE_URL'). "/realms/" .env("KEYCLOAK_REALM") . "/protocol/
-    openid-connect/auth? . http_build_query([
-        'client_id      => env('KEYCLOAK_CLIENT_ID),
-        'redirect_uri'  => env('KEYCLOAK_REDIRECT_URI'),
-        'response_type  => 'code',
-        'scope'         => 'openid profile email',
-    ]));
-}
-```
-
-<div align="center">
-
-**Figure 8: redirectToKeycloak Function**
-
-</div>
-
-##### Create handleKeycloakCallback Function
-
-In the `LoginController.php` file, create a `handleKeycloakCallback` function. This function processes the Keycloak callback by exchanging the authorization code for an access token, enabling secure user authentication and access to protected resources.
-
-<a id="_bookmark44"></a>
-
-```
-public function handleKeycloakCallback(Request $request)
-{
-    try {
-        $tokenResponse = Http::asForm()->post(env('KEYCLOAK_BASE_URL') . "/realms/" . env
-        ('KETCLOAK_REALM) . "/protocol/openid-connect/token", [
-            'client_id'    => env('KEYCLOAK_CLIENT_ID'),
-            'client_secret => env('KEYCLOAK_CLIENT_SECRET'),
-            'redirect_uri' => env('KEYCLOAK_REDIRECT_URI'),
-            'grant_type'   => 'authorization_code',
-            'code'         => $request->code,
-    ])->json();
-
-    if (!isset($tokenResponse['access_token'])) return redirect('/login')->withErrors('Login failed. ');
+    protected function mapUserToObject(array $user)
+    {
+        return (new User())->setRaw($user)->map([
+            'id'        => Arr::get($user, 'sub'),
+            'nickname'  => Arr::get($user, 'preferred_username'),
+            'name'      => Arr::get($user, 'name') ?? Arr::get($user, 'nama'),
+            'email'     => Arr::get($user, 'email'),
+            'nric'      => Arr::get($user, 'nric'),
+        ]);
     }
 }
 ```
 
 <div align="center">
 
-**Figure 9: handleKeycloakCallback Function**
+**Figure 8: Custom Keycloak Provider Class**
 
 </div>
 
-Retrieve the user information using the access token by querying the Keycloak User Info endpoint. Extract the IC number and name from the response to securely access and utilize these details within the application for user identification and processing.
+##### Register Custom Keycloak Provider
 
-<a id="_bookmark45"></a>
+Register the custom Keycloak Provider in the `EventServiceProvider.php` file. This tells Socialite to use the custom Provider class (with NRIC support) instead of the default Keycloak provider.
 
+<a id="_bookmark44"></a>
+
+**For Laravel 8.x to 10.x**, add the listener in the `$listen` array in `app/Providers/EventServiceProvider.php`:
+
+```php
+protected $listen = [
+    \SocialiteProviders\Manager\SocialiteWasCalled::class => [
+        \App\Resolvers\SSO\Keycloak\KeycloakExtendSocialite::class.'@handle',
+    ],
+];
 ```
-$userInfo = Http::withToken($tokenResponse['access_token'])->get(env('KEYCLOAK_BASE_URL') . "/
-realms/" . env('KEYCLOAK_REALM') . "/protocol/openid-connect/userinfo")->json();
-if (!$userInfo || !isset($userInfo['nric'])) return redirect('/login')->withErrors('User data missing.');
-```
 
-<div align="center">
+Then create the file `app/Resolvers/SSO/Keycloak/KeycloakExtendSocialite.php`:
 
-**Figure 10: Retrieve User Information**
+```php
+<?php
 
-</div>
+namespace App\Resolvers\SSO\Keycloak;
 
-Creates or updates the user in the database. Finds a user based on IC number and if the IC number is found, proceed to log the user in. If the IC number is not found or does not match, handle redirect to the login page with login error message.
+use SocialiteProviders\Manager\SocialiteWasCalled;
 
-<a id="_bookmark46"></a>
-
-```
-      $user = \App\Models\User::updateOrCreate(['ic_number' => $userInfo['nric']], ['name' => $userInfo
-      ['nama']]);
-
-      Auth::login($user);
-      return redirect('/dashboard')->withErrors('Login error: ' . $e->getMessage());
-
-  } catch (\Exception $e) {
-      return redirect('/login')->withErrors('Login error: ' . $e->getMessage());
-  }
+class KeycloakExtendSocialite
+{
+    public function handle(SocialiteWasCalled $socialiteWasCalled)
+    {
+        $socialiteWasCalled->extendSocialite('keycloak', \App\Resolvers\SSO\Keycloak\Provider::class);
+    }
 }
 ```
 
 <div align="center">
 
-**Figure 11: Finds IC Number and Stored in The Database**
+**Figure 9: Register Custom Keycloak Provider in EventServiceProvider**
+
+</div>
+
+##### Create redirectToKeycloak Function
+
+In the `LoginController.php` file, create the `redirectToKeycloak` function. This function uses Laravel Socialite to redirect users to the Keycloak Authorization Endpoint to start the login process. Socialite handles the construction of the authorization URL, including the client ID, redirect URI, and required scopes.
+
+<a id="_bookmark45"></a>
+
+```php
+use Laravel\Socialite\Facades\Socialite;
+
+public function redirectToKeycloak()
+{
+    return Socialite::driver('keycloak')->redirect();
+}
+```
+
+<div align="center">
+
+**Figure 10: redirectToKeycloak Function**
+
+</div>
+
+##### Create handleKeycloakCallback Function
+
+In the `LoginController.php` file, create a `handleKeycloakCallback` function. This function uses Socialite to handle the Keycloak callback, automatically exchanging the authorization code for an access token and retrieving the user information. The NRIC is available directly from the Socialite user object thanks to the custom Provider override.
+
+<a id="_bookmark46"></a>
+
+```php
+public function handleKeycloakCallback()
+{
+    try {
+        $keycloakUser = Socialite::driver('keycloak')->user();
+
+        $nric = $keycloakUser->nric ?? null;
+        $name = $keycloakUser->name ?? 'New User';
+
+        if (!$nric) {
+            return redirect('/login')->withErrors('User data missing.');
+        }
+
+        $user = \App\Models\User::updateOrCreate(
+            ['ic_number' => $nric],
+            ['name' => $name]
+        );
+
+        Auth::login($user);
+        return redirect('/dashboard');
+
+    } catch (\Exception $e) {
+        return redirect('/login')->withErrors('Login error: ' . $e->getMessage());
+    }
+}
+```
+
+<div align="center">
+
+**Figure 11: handleKeycloakCallback Function**
 
 </div>
 
@@ -664,12 +709,12 @@ If the application or website does not store the IC number in the database, the 
 
 <a id="_bookmark48"></a>
 
-```
-  protected $fillable = [
+```php
+protected $fillable = [
     'name',
     'password',
     'ic_number',
-  ];
+];
 ```
 
 <div align="center">
@@ -684,16 +729,16 @@ Add the new routes for all the newly created functions in the `web.php` file to 
 
 <a id="_bookmark50"></a>
 
-```
+```php
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::view('/dashboard', 'dashboard')->middleware('auth');
 
-Route::get('/login', [KeycloakController::class, 'redirectToKeycloak'])->name('login');
-Route::get('/callback', [KeycloakController::class, 'handleKeycloakCallback'])->name('callback');
-Route::get('/logout', [KeycloakController::class, 'logout'])->name('logout');
+Route::get('/login', [LoginController::class, 'redirectToKeycloak'])->name('login');
+Route::get('/callback', [LoginController::class, 'handleKeycloakCallback'])->name('callback');
+Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
 ```
 
 <div align="center">
@@ -704,7 +749,7 @@ Route::get('/logout', [KeycloakController::class, 'logout'])->name('logout');
 
 #### PHP 8 with Laravel Framework
 
-> This configuration guide is specifically applicable to **PHP v8.1.25** and **Laravel framework v10.48.12**. It is important to note that this guide may not be universally compatible with all PHP or Laravel versions. Developers should verify that their environment, including libraries, programming language, and framework versions, aligns with these requirements to ensure successful implementation.
+> This configuration guide is specifically applicable to **PHP v8.1.25** and **Laravel framework v10.48.12**. This guide uses the [Socialite Providers Keycloak](https://socialiteproviders.com/Keycloak/) package with a custom Provider override to support MyDigital ID's NRIC-based authentication. Developers should verify that their environment, including libraries, programming language, and framework versions, aligns with these requirements to ensure successful implementation.
 
 ##### <a id="environment-configuration-1"></a>Environment Configuration
 
@@ -717,7 +762,7 @@ KEYCLOAK_BASE_URL=MydigitalID_host
 KEYCLOAK_REALM=mydid
 KEYCLOAK_CLIENT_ID=Client ID
 KEYCLOAK_CLIENT_SECRET=NUxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-KEYCLOAK_REDIRECT_URI=http://127.0.0.1:8000/callback 
+KEYCLOAK_REDIRECT_URI=http://127.0.0.1:8000/callback
 ```
 
 <div align="center">
@@ -728,240 +773,206 @@ KEYCLOAK_REDIRECT_URI=http://127.0.0.1:8000/callback
 
 ##### <a id="library-installation-1"></a>Library Installation
 
-Install the Keycloak Guard library in the Laravel project folder.
+Install the Socialite Providers Keycloak library in the Laravel project folder.
 
 <a id="_bookmark55"></a>
 
 ```
-composer require robsontenorio/laravel-keycloak-guard
+composer require socialiteproviders/keycloak
 ```
 
 <div align="center">
 
-**Figure 15: Keycloak Guard Library Installation**
+**Figure 15: Socialite Keycloak Provider Library Installation**
 
 </div>
 
-##### Configure Return Variable
+##### Add Keycloak Configuration
 
-Configure the return variables in the `keycloak-web.php` file by retrieving the necessary values from the environment file.
+Add the Keycloak configuration in the `config/services.php` file to define the Keycloak connection parameters for Socialite.
 
 <a id="_bookmark57"></a>
 
-```
-return [
-    'base_url' => env('KEYCLOAK_BASE_URL'),
-    'realm' => env(KEYCLOAK_REALM),
-    'client_id' => env('KEYCLOAK_CLIENT_ID'),
+```php
+'keycloak' => [
+    'client_id'     => env('KEYCLOAK_CLIENT_ID'),
     'client_secret' => env('KEYCLOAK_CLIENT_SECRET'),
-    'redirect_uri' => env('KEYCLOAK_REDIRECT_URI'),
-    'cache_openid' => false,
-    'cache_openif_ttl' => 3600,
-    'allowed_resources' => null,
-    'user_provider_credential' => null,
-    'append_decoded_token' => false,
-    'allowed_resources' => null,
-    'guzzle_options' => [],
-];
-```
-
-<div align="center">
-
-**Figure 16: Configure the Return Variable**
-
-</div>
-
-##### <a id="add-keycloak-driver-1"></a>Add Keycloak Driver
-
-Add the configuration for the Keycloak driver in the `auth.php` file to define Keycloak as an authentication provider for the application.
-
-<a id="_bookmark59"></a>
-
-```
-'keyloak' => [
-    'driver' => 'keycloak-web',
-    'provider' => 'users',
+    'redirect'      => env('KEYCLOAK_REDIRECT_URI'),
+    'base_url'      => env('KEYCLOAK_BASE_URL'),
+    'realms'        => env('KEYCLOAK_REALM'),
 ],
 ```
 
 <div align="center">
 
-**Figure 17: Keycloak Driver**
+**Figure 16: Keycloak Configuration in services.php**
+
+</div>
+
+##### Create Custom Keycloak Provider
+
+Since MyDigital ID uses NRIC as the primary authentication identifier, create a custom Provider class that extends the Socialite Keycloak Provider to include the `nric` field in the user mapping. Create the file at `app/Resolvers/SSO/Keycloak/Provider.php`.
+
+<a id="_bookmark59"></a>
+
+```php
+<?php
+
+namespace App\Resolvers\SSO\Keycloak;
+
+use Illuminate\Support\Arr;
+use Laravel\Socialite\Two\User;
+use SocialiteProviders\Keycloak\Provider as KeycloakProvider;
+
+class Provider extends KeycloakProvider
+{
+    protected function mapUserToObject(array $user)
+    {
+        return (new User())->setRaw($user)->map([
+            'id'        => Arr::get($user, 'sub'),
+            'nickname'  => Arr::get($user, 'preferred_username'),
+            'name'      => Arr::get($user, 'name') ?? Arr::get($user, 'nama'),
+            'email'     => Arr::get($user, 'email'),
+            'nric'      => Arr::get($user, 'nric'),
+        ]);
+    }
+}
+```
+
+<div align="center">
+
+**Figure 17: Custom Keycloak Provider Class**
+
+</div>
+
+##### Register Custom Keycloak Provider
+
+Register the custom Keycloak Provider so that Socialite uses the custom Provider class (with NRIC support) instead of the default Keycloak provider.
+
+<a id="_bookmark61"></a>
+
+**For Laravel 10.x**, register the listener in `app/Providers/AppServiceProvider.php` within the `boot` method:
+
+```php
+use Illuminate\Support\Facades\Event;
+
+public function boot()
+{
+    Event::listen(function (\SocialiteProviders\Manager\SocialiteWasCalled $event) {
+        $event->extendSocialite('keycloak', \App\Resolvers\SSO\Keycloak\Provider::class);
+    });
+}
+```
+
+**For Laravel 11+**, the same approach applies in `app/Providers/AppServiceProvider.php`.
+
+<div align="center">
+
+**Figure 18: Register Custom Keycloak Provider in AppServiceProvider**
 
 </div>
 
 ##### <a id="create-redirecttokeycloak-function-1"></a>Create redirectToKeycloak Function
 
-In the `LoginController.php` file, create the `redirectToKeycloak` function. This function redirects users to the Keycloak Authorization Endpoint to start the login process. It is a key step in integrating Keycloak with a PHP application using the OAuth2 or OpenID Connect protocols, ensuring secure and seamless user authentication.
-
-<a id="_bookmark61"></a>
-
-```
-public function redirectToKeycloak()
-{
-    $config = config('keycloak-web');
-    $url = $config['base_url'] . '/realms/' . $config['realm'] . '/protocol/openid-connect/auth?' . http_build_query([
-        'client_id' => $config['client_id'],
-        'redirect_uri' => $config['redirect_uri'],
-        'response_type' => 'code',
-        'scope' => 'openid profile email',
-        'state' => bin2hex(random_bytes(16)),
-        'nonce' => bin2hex(random_bytes(16)),
-        'prompt' => 'login',
-    ]);
-    return redirect($url);
-}
-```
-
-<div align="center">
-
-**Figure 18: `redirectToKeycloak` Function**
-
-</div>
-
-##### Create getAccessTokenFromKeycloak Function
-
-In the LoginController.php file, implement the `getAccessTokenFromKeycloak` function. This function is responsible for exchanging the authorization code obtained during the authentication process with Keycloak for an access token.
+In the `LoginController.php` file, create the `redirectToKeycloak` function. This function uses Laravel Socialite to redirect users to the Keycloak Authorization Endpoint to start the login process. Socialite handles the construction of the authorization URL, including the client ID, redirect URI, and required scopes.
 
 <a id="_bookmark63"></a>
 
-```
-private function getAccessTokenFromKeycloak($code)
+```php
+use Laravel\Socialite\Facades\Socialite;
+
+public function redirectToKeycloak()
 {
-    $config = config('keycloak-web');
-    $client = new \GuzzleHttp\Client();
-    try {
-        $response = $client->post($config['base_url'] . '/realms/' . $config['realm'] . '/protocol/openid-connect/token', [
-            'form_params' => [
-                'grant_type' => 'authorization_code',
-                'client_id' => $config['client_id'],
-                'client_secret' => $config['client_secret'],
-                'code' => $code,
-                'redirect_uri' => $config['redirect_uri'],
-            ]
-        ]);
-        return json_decode($response->getBody()->getContents());
-    } catch (\Exception $e) {
-        return null;
-    }
+    return Socialite::driver('keycloak')->redirect();
 }
 ```
 
 <div align="center">
 
-**Figure 19: `getAccessTokenFromKeycloak` Function**
-
-</div>
-
-##### Create getUserInfoFromKeycloak Function
-
-Create a function called `getUserInfoFromKeycloak` in the `LoginController.php` file. This method is to retrieve user information using an access token.
-
-<a id="_bookmark65"></a>
-
-```
-private function getUserInfoFromKeycloak($token)
-{
-    $config = config('keycloak-web');
-    $client = new \GuzzleHttp\Client();
-    $response = $client->get($config['base_url'] . '/realms/' . $config['realm'] . '/protocol/openid-connect/userinfo', [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $token->access_token,
-        ]
-    ]);
-    return json_decode($response->getBody()->getContents());
-}
-```
-
-<div align="center">
-
-**Figure 20: `getUserInfoFromKeycloak` Function**
+**Figure 19: redirectToKeycloak Function**
 
 </div>
 
 ##### <a id="create-handlekeycloakcallback-function-1"></a>Create handleKeycloakCallback Function
 
-In the `LoginController.php` file, create a `handleKeycloakCallback` function. This function processes the Keycloak callback by exchanging the authorization code for an access token, enabling secure user authentication and access to protected resources.
+In the `LoginController.php` file, create a `handleKeycloakCallback` function. This function uses Socialite to handle the Keycloak callback, automatically exchanging the authorization code for an access token and retrieving the user information. The NRIC is available directly from the Socialite user object thanks to the custom Provider override.
 
-<a id="_bookmark67"></a>
+<a id="_bookmark65"></a>
 
-```
-public function handleKeycloakCallback(Request $request)
+```php
+public function handleKeycloakCallback()
 {
-    $code = $request->input('code');
-    if (!$code) {
-        return redirect('/login')->withErrors(['error' => 'Authorization code not received.']);
-    }
+    try {
+        $keycloakUser = Socialite::driver('keycloak')->user();
 
-    $token = $this->getAccessTokenFromKeycloak($code);
-    if (!$token) {
-        return redirect('/login')->withErrors(['error' => 'Failed to retrieve access token from Keycloak.']);
-    }
-
-}
+        $nric = $keycloakUser->nric ?? null;
+        $name = $keycloakUser->name ?? 'New User';
+        session(['nric' => $nric, 'name' => $name]);
 ```
 
 <div align="center">
 
-**Figure 21: `handleKeycloakCallback` Function**
+**Figure 20: handleKeycloakCallback Function**
 
 </div>
 
-Retrieve the user information using the access token by querying the Keycloak User Info endpoint. Extract the IC number and name from the response to securely access and utilize these details within the application for user identification and processing.
+Retrieve the user information from the Socialite user object. The NRIC and name are already mapped by the custom Provider. Store them in session for later use in account linking or registration flows.
 
-<a id="_bookmark68"></a>
+<a id="_bookmark67"></a>
 
-```
-    $userInfo = $this->getUserInfoFromKeycloak($token);
-    $nric = $userInfo->nric ?? null;
-    $name = $userInfo->nama ?? 'New User';
-    session(['nric' => $nric, 'name' => $name]);
+```php
+        if (!$nric) {
+            return redirect('/login')->withErrors(['error' => 'NRIC data not received from Keycloak.']);
+        }
 ```
 
 <div align="center">
 
-**Figure 22: Retrieve User Information**
+**Figure 21: Retrieve User Information**
 
 </div>
 
 Verify if the IC number exists in the users table by checking for a matching record. Ensure that the provided IC number is properly hashed and matches the stored hashed value for accurate user identification and secure authentication.
 
-<a id="_bookmark69"></a>
+<a id="_bookmark68"></a>
 
-```
-    $user = User::whereNotNull('ic_number')->get()->filter(function ($user) use ($nric) {
-        return Hash::check($nric, $user->ic_number);
-    })->first();
+```php
+        $user = User::whereNotNull('ic_number')->get()->filter(function ($user) use ($nric) {
+            return Hash::check($nric, $user->ic_number);
+        })->first();
 ```
 
 <div align="center">
 
-**Figure 23: Verify IC Number**
+**Figure 22: Verify IC Number**
 
 </div>
 
 Verify if the provided IC number matches the hashed value stored in the database. If a match is found, proceed to log the user in. If the IC number is not found or does not match, handle the necessary steps for linking the user's account or initiating the registration process.
 
-<a id="_bookmark70"></a>
+<a id="_bookmark69"></a>
 
-```
-    if ($user && Hash::check($nric, $user->ic_number)) {
-        Auth::login($user);
-        session()->regenerate();
-        return redirect()->intended('dashboard');
-    } else {
-        if (!$user) {
-            return redirect()->route('icnumber.notfound');
+```php
+        if ($user && Hash::check($nric, $user->ic_number)) {
+            Auth::login($user);
+            session()->regenerate();
+            return redirect()->intended('dashboard');
         } else {
-            return redirect()->route('icnumber.link');
+            if (!$user) {
+                return redirect()->route('icnumber.notfound');
+            } else {
+                return redirect()->route('icnumber.link');
+            }
         }
+    } catch (\Exception $e) {
+        return redirect('/login')->withErrors(['error' => 'Login error: ' . $e->getMessage()]);
     }
 }
 ```
 
 <div align="center">
 
-**Figure 24: Verify IC Number with The Hashed Value Stored in The Database**
+**Figure 23: Verify IC Number with The Hashed Value Stored in The Database**
 
 </div>
 
@@ -969,9 +980,9 @@ Verify if the provided IC number matches the hashed value stored in the database
 
 If the application or website does not store the IC number in the database, the developer can add the IC number column to the protected fillable section in the `User.php` file. This approach ensures that the IC number is securely managed and can be updated within the user model while maintaining data integrity.
 
-<a id="_bookmark72"></a>
+<a id="_bookmark70"></a>
 
-```
+```php
 protected $fillable = [
     'name',
     'ic_number',
@@ -982,7 +993,7 @@ protected $fillable = [
 
 <div align="center">
 
-**Figure 25: Add IC Number Column**
+**Figure 24: Add IC Number Column**
 
 </div>
 
@@ -990,9 +1001,9 @@ protected $fillable = [
 
 Create an `updateICNumber` function in the `LoginController.php` file to retrieve the IC number from the session. This function will identify users who have not yet linked their IC number, update the user's record with the IC number, log the user in, and then redirect them to the dashboard.
 
-<a id="_bookmark74"></a>
+<a id="_bookmark72"></a>
 
-```
+```php
 public function updateIcNumber(Request $request)
 {
     $nric = session('nric');
@@ -1011,7 +1022,7 @@ public function updateIcNumber(Request $request)
 
 <div align="center">
 
-**Figure 26: `updateICNumber` Function**
+**Figure 25: `updateICNumber` Function**
 
 </div>
 
@@ -1019,16 +1030,16 @@ public function updateIcNumber(Request $request)
 
 Create a `verifyAndLinkAccount` function in the `LoginController.php` file to validate the email and password input. The function will attempt to authenticate the user using the provided credentials. If authentication is successful, the IC number will be updated and linked to the user's account.
 
-<a id="_bookmark76"></a>
+<a id="_bookmark74"></a>
 
-```
+```php
 public function verifyAndLinkAccount(Request $request)
 {
     $request->validate([
         'email' => 'required|email',
         'password' => 'required',
     ]);
-    
+
     $nric = session('nric');
     if (!$nric) {
         return redirect()->back()->withErrors(['nric' => 'NRIC data not found in session.']);
@@ -1048,7 +1059,7 @@ public function verifyAndLinkAccount(Request $request)
 
 <div align="center">
 
-**Figure 27: `verifyAndLinkAccount` Function**
+**Figure 26: `verifyAndLinkAccount` Function**
 
 </div>
 
@@ -1056,9 +1067,9 @@ public function verifyAndLinkAccount(Request $request)
 
 Create a `registerNewAccount` function in the `LoginController.php` file to check if the IC number and name are in the session. If no user is found, a new account will be created, and the user will be redirected to the dashboard.
 
-<a id="_bookmark78"></a>
+<a id="_bookmark76"></a>
 
-```
+```php
 public function registerNewAccount(Request $request)
 {
     $nric = session('nric');
@@ -1067,7 +1078,7 @@ public function registerNewAccount(Request $request)
     if (!$nric || !$name) {
         return redirect()->route('login')->withErrors(['nric' => 'IC number or name not found.']);
     }
-    
+
     // Check if user already exists
     $existingUser = User::whereNotNull('ic_number')->get()->filter(function ($user) use ($nric) {
         return Hash::check($nric, $user->ic_number);
@@ -1090,7 +1101,7 @@ public function registerNewAccount(Request $request)
 
 <div align="center">
 
-**Figure 28: `registerNewAccount` Function**
+**Figure 27: `registerNewAccount` Function**
 
 </div>
 
@@ -1098,9 +1109,9 @@ public function registerNewAccount(Request $request)
 
 Add the new routes for all the newly created functions in the `web.php` file to ensure proper routing for actions such as account registration, login, and IC number linking.
 
-<a id="_bookmark80"></a>
+<a id="_bookmark78"></a>
 
-```
+```php
 // Keycloak login routes
 Route::get('/login/keycloak', [LoginController::class, 'redirectToKeycloak'])->name('login.keycloak');
 Route::get('/callback', [LoginController::class, 'handleKeycloakCallback'])->name('keycloak.callback');
@@ -1122,7 +1133,7 @@ Route::post('/icnumber/verify-and-link', [LoginController::class, 'verifyAndLink
 
 <div align="center">
 
-**Figure 29: Add New Routes**
+**Figure 28: Add New Routes**
 
 </div>
 
