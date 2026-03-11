@@ -93,6 +93,8 @@
       - [Create link_existing_account Function](#_bookmark122)
       - [Create register_new_account Function](#_bookmark124)
       - [Create logout Function]
+    - [MYDIGITAL ID APPLICATION EXISTENCE CHECK MODULE](#php-7-with-codeigniter-framework)
+      - [Example Method To Detect MyDigital ID App In Mobile Application](#php-7-with-codeigniter-framework)
 
 ---
 
