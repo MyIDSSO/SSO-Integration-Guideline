@@ -81,6 +81,7 @@
       - [Create update_user Function](#_bookmark99)
       - [Create linkAccount Function](#_bookmark101)
       - [Create registerWithKeycloak Function](#_bookmark103)
+      - [Create logout Function]
       - [Add New Routes](#add-new-routes-2)
     - [PHP 7 with CodeIgniter Framework](#php-7-with-codeigniter-framework)
       - [Configuration Setup](#configuration-setup)
@@ -91,6 +92,7 @@
       - [Create show_modal_options Function](#_bookmark120)
       - [Create link_existing_account Function](#_bookmark122)
       - [Create register_new_account Function](#_bookmark124)
+      - [Create logout Function]
 
 ---
 
