@@ -54,8 +54,8 @@
     - [PHP 7 with Laravel Framework](#php-7-with-laravel-framework)
       - [Environment Configuration](#environment-configuration)
       - [Library Installation](#library-installation)
-      - [Publish Configuration File](#library-installation)
-      - [Define Scopes](#library-installation)
+      - [Publish Configuration File](#bookmark2413)
+      - [Define Scopes](#bookmark2414)
       - [Add Keycloak Driver](#add-keycloak-driver)
       - [Add Column in Model](#add-ic-number-column-in-model)
       - [Add New Routes](#add-new-routes)
@@ -533,7 +533,7 @@ Install the Keycloak Guard library in the Laravel project folder.
 <a id="_bookmark38"></a>
 
 ```
-composer require robsontenorio/laravel-keycloak-guard
+composer require vizir/laravel-keycloak-web-guard:4.1.0
 ```
 
 <div align="center">
@@ -541,6 +541,36 @@ composer require robsontenorio/laravel-keycloak-guard
 **Figure 6: Keycloak Guard Library Installation**
 
 </div>
+##### Publish Configuration File
+Publish the configuration file will create a **keycloak-web.php** file in config directory, which can edit to customize settings like routes and redirect URLs.
+
+<a id="_bookmark2413"></a>
+
+```
+php artisan vendor:publich --provider="Vizir\KeycloakWebGuard\KeycloakWebGuardServiceProvider"
+```
+
+<div align="center">
+
+**Publich keycloak-web.php File**
+
+</div>
+
+##### Define Scopes
+In **keycloak-web.php** file, define scopes as 'openid'.
+
+<a id="_bookmark2414"></a>
+
+```
+'scopes' -> ['openid']
+```
+
+<div align="center">
+
+**OpenID Connect (OIDC) Scopes**
+
+</div>
+
 
 ##### Add Keycloak Driver
 
