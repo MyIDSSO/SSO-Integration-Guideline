@@ -115,10 +115,9 @@
 - [Figure 4: MyDigital ID SSO Protocol Sequence Diagram](#_bookmark17)
 - [Figure 5: Environment Configuration in PHP Laravel](#_bookmark36)
 - [Figure 6: Keycloak Web Guard Library Installation](#_bookmark38)
-- [Figure 7: PUBLISH KEYCLOAK-WEB.PHP FILE]
-- [Figure 7: Keycloak Guard Driver](#_bookmark40)
+- [Figure 7: PUBLISH KEYCLOAK-WEB.PHP FILE] 
 - [Figure 8: OPENID CONNECT (OIDC) SCOPES]
-- [Figure 9: Keycloak Driver](#_bookmark40)
+- [Figure 9: Keycloak Guard Driver](#_bookmark40)
 - [Figure 10: KEYCLOAK PROVIDERS DRIVER] 
 - [Figure 11: ADD ‘NAMA’ AND ‘NRIC’ COLUMN]
 - [Figure 12: Add New Routes](#_bookmark50)
